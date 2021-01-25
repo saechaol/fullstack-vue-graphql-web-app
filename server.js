@@ -1,92 +1,34 @@
 // Import ApolloServer to enable GraphQL
-const { ApolloServer, gql } = require("apollo-server");
+const { ApolloServer } = require("apollo-server");
+const mongoose = require("mongoose");
+const fs = require("fs");
+const path = require("path");
 
-const todos = [
-  { task: "Wash dishes", completed: false },
-  { task: "Make bed", completed: false },
-  { task: "Clean room", completed: false },
-];
+const filePath = path.join(__dirname, "typeDefs.gql");
+const typeDefs = fs.readFileSync(filePath, "utf-8");
+const resolvers = require("./resolvers");
 
-const classes = [
-  {
-    class: "Computer Graphics",
-    time: "10AM - 11AM",
-    days: ["Monday", "Wednesday", "Friday"],
-  },
-  { class: "Senior Project", time: "9AM - 10AM", days: ["Wednesday"] },
-  {
-    class: "Intelligent Systems",
-    time: "11AM - 12PM",
-    days: ["Monday", "Wednesday", "Friday"],
-  },
-  { class: "Senior Seminar", time: "9AM - 10AM", days: ["Friday"] },
-  { class: "Career Planning", time: "2PM - 3PM", days: ["Friday"] },
-  {
-    class: "Operating System Pragmatics",
-    time: "2PM - 3:30PM",
-    days: ["Tuesday", "Thursday"],
-  },
-  { class: "Physics", time: "9AM - 1:30PM", days: ["Tuesday", "Thursday"] },
-];
+require("dotenv").config({ path: "variables.env" });
+const User = require("./models/User");
+const Post = require("./models/Post");
 
-/* Define type definitions for this schema
- *  -   Todo: a list of tasks to complete and their completion status
- *  -   Classes: a list of classes, times, and days
- *  -   Query: functions to query this database
- *  -   Mutation: functions that modify this database
- */
-const typeDefs = gql`
-  type Todo {
-    task: String
-    completed: Boolean
-  }
-
-  type Class {
-    class: String
-    time: String
-    days: [String]
-  }
-
-  type Query {
-    getTodos: [Todo]
-    getClass: [Class]
-  }
-
-  type Mutation {
-    addTodo(task: String, completed: Boolean): Todo
-    addClass(class: String, time: String, days: [String]): Class
-  }
-`;
-
-const resolvers = {
-  Query: {
-    getTodos: () => todos,
-    getClass: () => classes,
-  },
-  Mutation: {
-    /*
-     * addTodo: inserts the arguments into the todos array
-     */
-    addTodo: (_, { newTask, isComplete }) => {
-      const newTodo = { task: newTask, completed: isComplete };
-      todos.push(newTodo);
-      return newTodo;
-    },
-    /*
-     * addClass: inserts the arguments into the classes array
-     */
-    addClass: (_, { className, newTime, newDays }) => {
-      const newClass = { class: className, time: newTime, days: newDays };
-      classes.push(newClass);
-      return newClass;
-    },
-  },
-};
+mongoose
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+  })
+  .then(() => console.log("DB Connected"))
+  .catch((err) => console.error(err));
 
 // Initialize ApolloServer object
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  context: {
+    User,
+    Post,
+  },
 });
 
 server.listen().then(({ url }) => {

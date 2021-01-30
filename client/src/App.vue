@@ -45,7 +45,7 @@
           to="/"
           custom
           v-slot="{ navigate }"
-          style="cursor: pointer"
+          style="cursor: pointer;overflow: visible;display: block"
         >
           <span @click="navigate" @keypress.enter="navigate" role="link"
             >Postcards</span

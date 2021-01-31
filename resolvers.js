@@ -15,6 +15,18 @@ module.exports = {
       });
       return posts;
     },
+    getCurrentUser: async (_, args, { User, currentUser }) => {
+      if (!currentUser) {
+        return null;
+      }
+      const user = await User.findOne({
+        username: currentUser.username,
+      }).populate({
+        path: "likes",
+        model: "Post",
+      });
+      return user;
+    },
   },
 
   Mutation: {

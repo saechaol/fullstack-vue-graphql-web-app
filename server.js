@@ -1,8 +1,9 @@
 // Import ApolloServer to enable GraphQL
-const { ApolloServer } = require("apollo-server");
+const { ApolloServer, AuthenticationError } = require("apollo-server");
 const mongoose = require("mongoose");
 const fs = require("fs");
 const path = require("path");
+const jwt = require("jsonwebtoken");
 
 // Import type definitions and resolvers
 const filePath = path.join(__dirname, "typeDefs.gql");
@@ -24,13 +25,26 @@ mongoose
   .then(() => console.log("DB Connected"))
   .catch((err) => console.error(err));
 
+// Verify JWT token from client
+const getUser = async (token) => {
+  if (token) {
+    try {
+      return jwt.verify(token, process.env.SECRET);
+    } catch (err) {
+      throw new AuthenticationError(
+        "Your session has ended. Please sign in again."
+      );
+    }
+  }
+};
+
 // Initialize ApolloServer GraphQL Server object using type definitions, resolvers, and context objects
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  context: {
-    User,
-    Post,
+  context: async ({ req }) => {
+    const token = req.headers["authorization"];
+    return { User, Post, currentUser: await getUser(token) };
   },
 });
 

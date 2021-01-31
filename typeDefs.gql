@@ -35,6 +35,7 @@ type Token {
 
 type Query {
   getPosts: [Post]
+  getCurrentUser: User
 }
 
 type Mutation {

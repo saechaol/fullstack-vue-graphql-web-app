@@ -119,7 +119,7 @@
           left
           ><h3>
             <v-icon dark left class="mr-3">check_circle</v-icon
-            ><strong class="mr-6">Welcome back!</strong>
+            ><strong class="mr-6">You have successfully signed in!</strong>
             <v-btn class="ml-12 float-right" light @click="authSnackbar = false"
               >Close</v-btn
             >

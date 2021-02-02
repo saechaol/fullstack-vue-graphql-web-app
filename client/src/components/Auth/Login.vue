@@ -57,7 +57,7 @@
                 <v-flex xs12>
                   <v-btn
                     :loading="loading"
-                    :disabled="!isFormValid"
+                    :disabled="!isFormValid || loading"
                     color="accent"
                     type="submit"
                   >
@@ -102,7 +102,7 @@ export default {
         (password) => !!password || "Password is cannot be empty",
         // password is at least 8 characters
         (password) =>
-          password.length <= 12 || "Password must be at least 8 characters",
+          password.length >= 8 || "Password must be at least 8 characters",
       ],
     };
   },

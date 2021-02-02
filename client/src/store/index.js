@@ -2,7 +2,12 @@ import Vue from "vue";
 import Vuex from "vuex";
 import router from "../router/index";
 import { defaultClient as apolloClient } from "../main";
-import { GET_POSTS, SIGNIN_USER, GET_CURRENT_USER } from "../queries";
+import {
+  GET_POSTS,
+  SIGNIN_USER,
+  GET_CURRENT_USER,
+  REGISTER_USER,
+} from "../queries";
 
 Vue.use(Vuex);
 
@@ -70,7 +75,6 @@ export default new Vuex.Store({
     signinUser: ({ commit }, payload) => {
       commit("clearError");
       commit("setLoading", true);
-      localStorage.setItem("token", "");
       apolloClient
         .mutate({
           mutation: SIGNIN_USER,
@@ -79,6 +83,26 @@ export default new Vuex.Store({
         .then(({ data }) => {
           commit("setLoading", false);
           localStorage.setItem("token", data.signinUser.token);
+          router.go();
+        })
+        .catch((err) => {
+          commit("setLoading", false);
+          commit("setError", err);
+          console.error(err);
+        });
+    },
+
+    registerUser: ({ commit }, payload) => {
+      commit("clearError");
+      commit("setLoading", true);
+      apolloClient
+        .mutate({
+          mutation: REGISTER_USER,
+          variables: payload,
+        })
+        .then(({ data }) => {
+          commit("setLoading", false);
+          localStorage.setItem("token", data.registerUser.token);
           router.go();
         })
         .catch((err) => {

@@ -16,6 +16,7 @@ export default new Vuetify({
         info: "#698CD6",
         success: "#02b872",
         background: "#e3e3e3",
+        alternate: "#ebac5e",
       },
       dark: {
         primary: "#6491F2",
@@ -26,6 +27,7 @@ export default new Vuetify({
         info: "#4C6EB8",
         success: "#188f5b",
         background: "#333333",
+        alternate: "#c47f47",
       },
     },
   },

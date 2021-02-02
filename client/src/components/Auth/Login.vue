@@ -21,7 +21,7 @@
           <v-container>
             <v-form @submit.prevent="handleSigninUser">
               <v-layout row class="justify-center">
-                <v-flex xs10>
+                <v-flex xs11>
                   <v-text-field
                     v-model="username"
                     prepend-icon="face"
@@ -34,7 +34,7 @@
               </v-layout>
 
               <v-layout row class="justify-center">
-                <v-flex xs10>
+                <v-flex xs11>
                   <v-text-field
                     v-model="password"
                     prepend-icon="extension"
@@ -48,7 +48,12 @@
 
               <v-layout row>
                 <v-flex xs12>
-                  <v-btn color="accent" type="submit">Sign In</v-btn>
+                  <v-btn :loading="loading" color="accent" type="submit">
+                    <span slot="loader" class="custom-loader">
+                      <v-icon light>cached</v-icon>
+                    </span>
+                    Sign In</v-btn
+                  >
                   <h3>
                     Don't have an account?
                     <router-link to="/signup">Register</router-link>
@@ -76,7 +81,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(["error", "user"]),
+    ...mapGetters(["loading", "error", "user"]),
   },
 
   watch: {
@@ -98,3 +103,42 @@ export default {
   },
 };
 </script>
+
+<style>
+.custom-loader {
+  animation: loader 1s infinite;
+  display: flex;
+}
+@-moz-keyframes loader {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@-webkit-keyframes loader {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@-o-keyframes loader {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes loader {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+</style>

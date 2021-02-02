@@ -7,14 +7,21 @@
       </v-flex>
     </v-layout>
 
+    <!-- Error alert -->
+    <v-layout v-if="error" row wrap>
+      <v-flex xs12 sm6 offset-sm3>
+        <form-alert :message="error.message"></form-alert>
+      </v-flex>
+    </v-layout>
+
     <!-- Signin Form -->
     <v-layout row wrap>
       <v-flex xs12 sm6 offset-sm3>
         <v-card color="secondary" dark>
           <v-container>
             <v-form @submit.prevent="handleSigninUser">
-              <v-layout row>
-                <v-flex xs12>
+              <v-layout row class="justify-center">
+                <v-flex xs10>
                   <v-text-field
                     v-model="username"
                     prepend-icon="face"
@@ -26,8 +33,8 @@
                 </v-flex>
               </v-layout>
 
-              <v-layout row>
-                <v-flex xs12>
+              <v-layout row class="justify-center">
+                <v-flex xs10>
                   <v-text-field
                     v-model="password"
                     prepend-icon="extension"
@@ -69,7 +76,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(["user"]),
+    ...mapGetters(["error", "user"]),
   },
 
   watch: {

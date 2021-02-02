@@ -8,6 +8,11 @@ import "material-design-icons-iconfont/dist/material-design-icons.css";
 import ApolloClient from "apollo-boost";
 import VueApollo from "vue-apollo";
 
+import FormAlert from "./components/Shared/FormAlert";
+
+// Register global FormAlert component
+Vue.component("form-alert", FormAlert);
+
 Vue.use(VueApollo);
 
 // Setup ApolloClient

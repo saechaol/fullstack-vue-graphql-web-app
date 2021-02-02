@@ -109,6 +109,22 @@
         <transition name="fade">
           <router-view />
         </transition>
+
+        <!-- Auth Snackbar -->
+        <v-snackbar
+          v-model="authSnackbar"
+          color="success"
+          :timeout="5000"
+          bottom
+          left
+          ><h3>
+            <v-icon dark left class="mr-3">check_circle</v-icon
+            ><strong class="mr-6">Welcome back!</strong>
+            <v-btn class="ml-12" light @click="authSnackbar = false"
+              >Close</v-btn
+            >
+          </h3>
+        </v-snackbar>
       </v-container>
     </main>
   </v-app>
@@ -122,7 +138,16 @@ export default {
   data() {
     return {
       sideNav: false,
+      authSnackbar: false,
     };
+  },
+  watch: {
+    user(newValue, oldValue) {
+      // if user didn't previously exist
+      if (oldValue === null) {
+        this.authSnackbar = true;
+      }
+    },
   },
   computed: {
     ...mapGetters(["user"]),

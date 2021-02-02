@@ -12,6 +12,7 @@ export default new Vuex.Store({
     user: null,
     loading: false,
     error: null,
+    authError: null,
   },
   mutations: {
     setPosts: (state, payload) => {
@@ -25,6 +26,9 @@ export default new Vuex.Store({
     },
     setError: (state, payload) => {
       state.error = payload;
+    },
+    setAuthError: (state, payloud) => {
+      state.authError = payloud;
     },
     clearUser: (state) => (state.user = null),
     clearError: (state) => (state.error = null),
@@ -100,6 +104,7 @@ export default new Vuex.Store({
     user: (state) => state.user,
     loading: (state) => state.loading,
     error: (state) => state.error,
+    authError: (state) => state.authError,
   },
   modules: {},
 });

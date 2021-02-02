@@ -19,10 +19,16 @@
       <v-flex xs12 sm6 offset-sm3>
         <v-card color="secondary" dark>
           <v-container>
-            <v-form @submit.prevent="handleSigninUser">
+            <v-form
+              v-model="isFormValid"
+              lazy-validation
+              ref="form"
+              @submit.prevent="handleSigninUser"
+            >
               <v-layout row class="justify-center">
                 <v-flex xs11>
                   <v-text-field
+                    :rules="usernameRules"
                     v-model="username"
                     prepend-icon="face"
                     label="Username"
@@ -36,6 +42,7 @@
               <v-layout row class="justify-center">
                 <v-flex xs11>
                   <v-text-field
+                    :rules="passwordRules"
                     v-model="password"
                     prepend-icon="extension"
                     label="Password"
@@ -48,7 +55,12 @@
 
               <v-layout row>
                 <v-flex xs12>
-                  <v-btn :loading="loading" color="accent" type="submit">
+                  <v-btn
+                    :loading="loading"
+                    :disabled="!isFormValid"
+                    color="accent"
+                    type="submit"
+                  >
                     <span slot="loader" class="custom-loader">
                       <v-icon light>cached</v-icon>
                     </span>
@@ -75,8 +87,23 @@ export default {
   name: "Login",
   data() {
     return {
+      isFormValid: true,
       username: "",
       password: "",
+      usernameRules: [
+        // if username was provided
+        (username) => !!username || "Username is cannot be empty",
+        // ensure username is less than 12 characters
+        (username) =>
+          username.length < 12 || "Username must be less than 12 characters",
+      ],
+      passwordRules: [
+        // if password was provided
+        (password) => !!password || "Password is cannot be empty",
+        // password is at least 8 characters
+        (password) =>
+          password.length <= 12 || "Password must be at least 8 characters",
+      ],
     };
   },
 
@@ -95,10 +122,12 @@ export default {
 
   methods: {
     handleSigninUser() {
-      this.$store.dispatch("signinUser", {
-        username: this.username,
-        password: this.password,
-      });
+      if (this.$refs.form.validate()) {
+        this.$store.dispatch("signinUser", {
+          username: this.username,
+          password: this.password,
+        });
+      }
     },
   },
 };

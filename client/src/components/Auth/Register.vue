@@ -92,7 +92,7 @@
                     <span slot="loader" class="custom-loader">
                       <v-icon light>cached</v-icon>
                     </span>
-                    Sign In</v-btn
+                    Register</v-btn
                   >
                   <h3>
                     Already have an account?

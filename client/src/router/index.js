@@ -25,9 +25,10 @@ const routes = [
     component: Posts,
   },
   {
-    path: "/posts/add",
+    path: "/post/add",
     name: "AddPost",
     component: AddPost,
+    beforeEnter: AuthGuard,
   },
   {
     path: "/profile",

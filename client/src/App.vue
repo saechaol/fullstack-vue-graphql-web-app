@@ -82,7 +82,7 @@
           :key="item.title"
           :to="item.link"
         >
-          <v-icon class="hidden-sm-only" text>{{ item.icon }}</v-icon>
+          <v-icon class="hidden-sm-only" left>{{ item.icon }}</v-icon>
           {{ item.title }}
         </v-btn>
 

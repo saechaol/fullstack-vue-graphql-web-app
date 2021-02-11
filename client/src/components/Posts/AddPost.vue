@@ -61,6 +61,8 @@
                 :items="[
                   'Art',
                   'Education',
+                  'Food',
+                  'Interior Decoration',
                   'Travel',
                   'Photography',
                   'Technology',

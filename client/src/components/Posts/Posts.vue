@@ -8,7 +8,7 @@
         v-for="post in infiniteScrollPosts.posts"
         :key="post._id"
       >
-        <v-card hover>
+        <v-card @click.native="goToPost(post._id)" hover>
           <v-img :src="post.imageUrl" height="30vh" lazy></v-img>
 
           <v-card-actions>
@@ -90,6 +90,9 @@ export default {
     },
   },
   methods: {
+    goToPost(postId) {
+      this.$router.push(`/posts/${postId}`);
+    },
     showMorePosts() {
       this.pageNum += 1;
 

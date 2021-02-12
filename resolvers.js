@@ -15,6 +15,13 @@ module.exports = {
       });
       return posts;
     },
+    getPost: async (_, { postId }, { Post }) => {
+      const post = await Post.findOne({ _id: postId }).populate({
+        path: "comment.commentUser",
+        model: "User",
+      });
+      return post;
+    },
     getCurrentUser: async (_, args, { User, currentUser }) => {
       if (!currentUser) {
         return null;

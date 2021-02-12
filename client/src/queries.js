@@ -1,4 +1,5 @@
 import { gql } from "apollo-boost";
+import { Query } from "mongoose";
 
 /* Posts Queries */
 export const GET_POSTS = gql`
@@ -7,6 +8,30 @@ export const GET_POSTS = gql`
       _id
       title
       imageUrl
+    }
+  }
+`;
+
+export const GET_POST = gql`
+  query($postId: ID!) {
+    getPost(postId: $postId) {
+      _id
+      title
+      imageUrl
+      categories
+      description
+      likes
+      createdDate
+      comments {
+        _id
+        commentBody
+        commentDate
+        commentUser {
+          _id
+          username
+          avatar
+        }
+      }
     }
   }
 `;

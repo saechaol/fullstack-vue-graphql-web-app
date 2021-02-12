@@ -50,10 +50,16 @@
       <!-- Message Input -->
       <v-layout class="mb-3" v-if="user">
         <v-flex xs12>
-          <v-form @submit.prevent="handleAddPostComment">
+          <v-form
+            v-model="isFormValid"
+            lazy-validation
+            ref="form"
+            @submit.prevent="handleAddPostComment"
+          >
             <v-layout row>
               <v-flex xs12>
                 <v-text-field
+                  :rules="commentRules"
                   v-model="commentBody"
                   clearable
                   :append-outer-icon="commentBody && 'send'"
@@ -95,7 +101,10 @@
                 </v-list-item-content>
 
                 <v-list-item-action class="hidden-xs-only">
-                  <v-icon color="grey">chat_bubble</v-icon>
+                  <v-icon
+                    :color="checkIfOwnComment(comment) ? 'accent' : 'grey'"
+                    >chat_bubble</v-icon
+                  >
                 </v-list-item-action>
               </v-list-item>
             </template>
@@ -117,6 +126,12 @@ export default {
     return {
       dialog: false,
       commentBody: "",
+      isFormValid: true,
+      commentRules: [
+        (comment) => !!comment || "Comment cannot be empty.",
+        (comment) =>
+          comment.length < 240 || "Comment must be less than 240 characters.",
+      ],
     };
   },
   apollo: {
@@ -134,32 +149,35 @@ export default {
   },
   methods: {
     handleAddPostComment() {
-      const variables = {
-        commentBody: this.commentBody,
-        userId: this.user._id,
-        postId: this.postId,
-      };
-      this.$apollo
-        .mutate({
-          mutation: ADD_POST_COMMENT,
-          variables,
-          update: (cache, { data: { addPostComment } }) => {
-            const data = cache.readQuery({
-              query: GET_POST,
-              variables: { postId: this.postId },
-            });
-            data.getPost.comments.unshift(addPostComment);
-            cache.writeQuery({
-              query: GET_POST,
-              variables: { postId: this.postId },
-              data,
-            });
-          },
-        })
-        .then(({ data }) => {
-          console.log(data.addPostComment);
-        })
-        .catch((err) => console.error(err));
+      if (this.$refs.form.validate()) {
+        const variables = {
+          commentBody: this.commentBody,
+          userId: this.user._id,
+          postId: this.postId,
+        };
+        this.$apollo
+          .mutate({
+            mutation: ADD_POST_COMMENT,
+            variables,
+            update: (cache, { data: { addPostComment } }) => {
+              const data = cache.readQuery({
+                query: GET_POST,
+                variables: { postId: this.postId },
+              });
+              data.getPost.comments.unshift(addPostComment);
+              cache.writeQuery({
+                query: GET_POST,
+                variables: { postId: this.postId },
+                data,
+              });
+            },
+          })
+          .then(({ data }) => {
+            this.$refs.form.reset();
+            console.log(data.addPostComment);
+          })
+          .catch((err) => console.error(err));
+      }
     },
     goToPreviousPage() {
       this.$router.go(-1);
@@ -168,6 +186,9 @@ export default {
       if (window.innerWidth > 500) {
         this.dialog = !this.dialog;
       }
+    },
+    checkIfOwnComment(comment) {
+      return this.user && this.user._id === comment.commentUser._id;
     },
   },
 };

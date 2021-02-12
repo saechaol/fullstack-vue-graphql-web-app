@@ -50,14 +50,16 @@
       <!-- Message Input -->
       <v-layout class="mb-3" v-if="user">
         <v-flex xs12>
-          <v-form>
+          <v-form @submit.prevent="handleAddPostComment">
             <v-layout row>
               <v-flex xs12>
                 <v-text-field
+                  v-model="commentBody"
                   clearable
-                  append-outer-icon="send"
+                  :append-outer-icon="commentBody && 'send'"
                   label="Add Comment"
                   type="text"
+                  @click:append-outer="handleAddPostComment"
                   prepend-icon="email"
                   required
                 >
@@ -76,7 +78,7 @@
 
             <template v-for="comment in getPost.comments">
               <v-divider :key="comment._id"></v-divider>
-              <v-list-item avatar inset :key="comment.title">
+              <v-list-item inset :key="comment.title">
                 <v-list-item-avatar>
                   <img :src="comment.commentUser.avatar" />
                 </v-list-item-avatar>
@@ -84,12 +86,12 @@
                   <v-list-item-title>
                     {{ comment.commentBody }}
                   </v-list-item-title>
-                  <v-list-item-sub-title>
+                  <v-list-item-subtitle>
                     {{ comment.commentUser.username }}
                     <span class="grey--text tetx--lighten-1 hidden-xs-only">{{
                       comment.commentDate
                     }}</span>
-                  </v-list-item-sub-title>
+                  </v-list-item-subtitle>
                 </v-list-item-content>
 
                 <v-list-item-action class="hidden-xs-only">
@@ -106,7 +108,7 @@
 
 <script>
 import { mapGetters } from "vuex";
-import { GET_POST } from "../../queries";
+import { GET_POST, ADD_POST_COMMENT } from "../../queries";
 
 export default {
   name: "Post",
@@ -114,6 +116,7 @@ export default {
   data() {
     return {
       dialog: false,
+      commentBody: "",
     };
   },
   apollo: {
@@ -130,6 +133,34 @@ export default {
     ...mapGetters(["user"]),
   },
   methods: {
+    handleAddPostComment() {
+      const variables = {
+        commentBody: this.commentBody,
+        userId: this.user._id,
+        postId: this.postId,
+      };
+      this.$apollo
+        .mutate({
+          mutation: ADD_POST_COMMENT,
+          variables,
+          update: (cache, { data: { addPostComment } }) => {
+            const data = cache.readQuery({
+              query: GET_POST,
+              variables: { postId: this.postId },
+            });
+            data.getPost.comments.unshift(addPostComment);
+            cache.writeQuery({
+              query: GET_POST,
+              variables: { postId: this.postId },
+              data,
+            });
+          },
+        })
+        .then(({ data }) => {
+          console.log(data.addPostComment);
+        })
+        .catch((err) => console.error(err));
+    },
     goToPreviousPage() {
       this.$router.go(-1);
     },

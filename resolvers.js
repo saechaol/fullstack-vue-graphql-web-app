@@ -17,7 +17,7 @@ module.exports = {
     },
     getPost: async (_, { postId }, { Post }) => {
       const post = await Post.findOne({ _id: postId }).populate({
-        path: "comment.commentUser",
+        path: "comments.commentUser",
         model: "User",
       });
       return post;

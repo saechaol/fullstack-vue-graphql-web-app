@@ -110,6 +110,25 @@ export const ADD_POST = gql`
   }
 `;
 
+export const ADD_POST_COMMENT = gql`
+  mutation($commentBody: String!, $userId: ID!, $postId: ID!) {
+    addPostComment(
+      commentBody: $commentBody
+      userId: $userId
+      postId: $postId
+    ) {
+      _id
+      commentBody
+      commentDate
+      commentUser {
+        _id
+        username
+        avatar
+      }
+    }
+  }
+`;
+
 /*
  * User Mutations
  */

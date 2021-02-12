@@ -44,6 +44,63 @@
         </v-card>
       </v-flex>
     </v-layout>
+
+    <!-- Post Comment Section -->
+    <div class="mt-3">
+      <!-- Message Input -->
+      <v-layout class="mb-3" v-if="user">
+        <v-flex xs12>
+          <v-form>
+            <v-layout row>
+              <v-flex xs12>
+                <v-text-field
+                  clearable
+                  append-outer-icon="send"
+                  label="Add Comment"
+                  type="text"
+                  prepend-icon="email"
+                  required
+                >
+                </v-text-field>
+              </v-flex>
+            </v-layout>
+          </v-form>
+        </v-flex>
+      </v-layout>
+
+      <!-- Comments -->
+      <v-layout row wrap>
+        <v-flex xs12>
+          <v-list subheader two-line>
+            <v-subheader>Comments ({{ getPost.comments.length }})</v-subheader>
+
+            <template v-for="comment in getPost.comments">
+              <v-divider :key="comment._id"></v-divider>
+              <v-list-item avatar inset :key="comment.title">
+                <v-list-item-avatar>
+                  <img :src="comment.commentUser.avatar" />
+                </v-list-item-avatar>
+                <v-list-item-content>
+                  <v-list-item-title>
+                    {{ comment.commentBody }}
+                  </v-list-item-title>
+                  <v-list-item-sub-title>
+                    {{ comment.commentUser.username }}
+                    <span class="grey--text tetx--lighten-1 hidden-xs-only">{{
+                      comment.commentDate
+                    }}</span>
+                  </v-list-item-sub-title>
+                </v-list-item-content>
+
+                <v-list-item-action class="hidden-xs-only">
+                  <v-icon color="grey">chat_bubble</v-icon>
+                </v-list-item-action>
+              </v-list-item>
+            </template>
+          </v-list>
+        </v-flex>
+      </v-layout>
+    </div>
   </v-container>
 </template>
 

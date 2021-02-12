@@ -55,4 +55,5 @@ type Mutation {
     description: String!
     creatorId: ID!
   ): Post!
+  addPostComment(commentBody: String!, userId: ID!, postId: ID!): Comment!
 }

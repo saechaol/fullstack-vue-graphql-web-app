@@ -119,5 +119,23 @@ module.exports = {
       }).save();
       return post;
     },
+    addPostComment: async (_, { commentBody, userId, postId }, { Post }) => {
+      const newComment = {
+        commentBody,
+        commentUser: userId,
+      };
+      const post = await Post.findOneAndUpdate(
+        // find post by id
+        { _id: postId },
+        // prepend (push) new message to beginning of messages array
+        { $push: { comments: { $each: [newComment], $position: 0 } } },
+        // return fresh document post after update
+        { new: true }
+      ).populate({
+        path: "comments.commentUser",
+        model: "User",
+      });
+      return post.comments[0];
+    },
   },
 };

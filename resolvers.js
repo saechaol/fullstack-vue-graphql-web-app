@@ -76,11 +76,11 @@ module.exports = {
         { $addToSet: { likes: postId } },
         { new: true }
       ).populate({
-        path: "favorites",
+        path: "likes",
         model: "Post",
       });
 
-      return { likes: post.likes, favorites: user.favorites };
+      return { likes: post.likes, favorites: user.likes };
     },
 
     unlikePost: async (_, { postId, username }, { Post, User }) => {
@@ -96,11 +96,11 @@ module.exports = {
         { $pull: { likes: postId } },
         { new: true }
       ).populate({
-        path: "favorites",
+        path: "likes",
         model: "Post",
       });
 
-      return { likes: post.likes, favorites: user.favorites };
+      return { likes: post.likes, favorites: user.likes };
     },
 
     signinUser: async (_, { username, password }, { User }) => {

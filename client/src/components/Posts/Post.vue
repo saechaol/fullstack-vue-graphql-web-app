@@ -6,8 +6,12 @@
         <v-card hover>
           <v-card-title>
             <h1>{{ getPost.title }}</h1>
-            <v-btn @click="handleLikePost" large icon v-if="user">
-              <v-icon large color="grey">favorite</v-icon>
+            <v-btn @click="handleToggleLike" large icon v-if="user">
+              <v-icon
+                large
+                :color="checkIfPostLiked(getPost._id) ? 'red' : 'grey'"
+                >favorite</v-icon
+              >
             </v-btn>
             <h3 class="ml-3 font-weight-thin">{{ getPost.likes }} LIKES</h3>
             <v-spacer></v-spacer>
@@ -129,6 +133,7 @@ export default {
   props: ["postId"],
   data() {
     return {
+      postLiked: false,
       dialog: false,
       commentBody: "",
       isFormValid: true,
@@ -150,9 +155,30 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(["user"]),
+    ...mapGetters(["user", "userLikes"]),
   },
   methods: {
+    checkIfPostLiked(postId) {
+      // check if user favorites include post with id of 'postId'
+      if (
+        this.userLikes &&
+        this.userLikes.some((fave) => fave._id === postId)
+      ) {
+        this.postLiked = true;
+        return true;
+      } else {
+        this.postLiked = false;
+        return false;
+      }
+      console.log(this);
+    },
+    handleToggleLike() {
+      if (this.postLiked) {
+        this.handleUnlikePost();
+      } else {
+        this.handleLikePost();
+      }
+    },
     handleLikePost() {
       const variables = {
         postId: this.postId,
@@ -178,7 +204,7 @@ export default {
         .then(({ data }) => {
           const updatedUser = {
             ...this.user,
-            favorites: data.likePost.likes,
+            likes: data.likePost.favorites,
           };
           this.$store.commit("setUser", updatedUser);
         })
@@ -209,7 +235,7 @@ export default {
         .then(({ data }) => {
           const updatedUser = {
             ...this.user,
-            favorites: data.unlikePost.likes,
+            likes: data.unlikePost.favorites,
           };
           this.$store.commit("setUser", updatedUser);
         })

@@ -63,6 +63,46 @@ module.exports = {
   },
 
   Mutation: {
+    likePost: async (_, { postId, username }, { Post, User }) => {
+      // Find post, and increment its 'like' counter
+      const post = await Post.findOneAndUpdate(
+        { _id: postId },
+        { $inc: { likes: 1 } },
+        { new: true }
+      );
+      // Find user, add id of post to its favorites
+      const user = await User.findOneAndUpdate(
+        { username },
+        { $addToSet: { likes: postId } },
+        { new: true }
+      ).populate({
+        path: "favorites",
+        model: "Post",
+      });
+
+      return { likes: post.likes, favorites: user.favorites };
+    },
+
+    unlikePost: async (_, { postId, username }, { Post, User }) => {
+      // Find post, and decrement its 'like' counter
+      const post = await Post.findOneAndUpdate(
+        { _id: postId },
+        { $inc: { likes: -1 } },
+        { new: true }
+      );
+      // Find user, remove id of post from its favorites
+      const user = await User.findOneAndUpdate(
+        { username },
+        { $pull: { likes: postId } },
+        { new: true }
+      ).populate({
+        path: "favorites",
+        model: "Post",
+      });
+
+      return { likes: post.likes, favorites: user.favorites };
+    },
+
     signinUser: async (_, { username, password }, { User }) => {
       const user = await User.findOne({ username });
       if (!user) {

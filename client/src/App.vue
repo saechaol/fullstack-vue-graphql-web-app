@@ -88,12 +88,17 @@
 
         <!-- Profile Button -->
         <v-btn text to="/profile" v-if="user">
-          <v-icon class="hidden-sm-only" left>account_box</v-icon>
-          <v-badge>
-            <!-- right color="red darken-2"> -->
-            <!-- <span slot="badge">1</span> -->
-            Profile</v-badge
+          <v-icon class="hidden-sm-only" left>account_box</v-icon>Profile
+          <v-badge
+            v-if="userLikes.length"
+            right
+            color="red darken-2"
+            :class="{ bounce: badgeAnimated }"
           >
+            <span slot="badge" v-if="userLikes.length">{{
+              userLikes.length
+            }}</span>
+          </v-badge>
         </v-btn>
         <!-- Sign Out Button -->
         <v-btn text v-if="user" @click="handleSignOutUser">
@@ -161,6 +166,7 @@ export default {
       sideNav: false,
       authSnackbar: false,
       authErrorSnackbar: false,
+      badgeAnimated: false,
     };
   },
   watch: {
@@ -176,9 +182,16 @@ export default {
         this.authErrorSnackbar = true;
       }
     },
+    userLikes(value) {
+      // if user likes value changes
+      if (value) {
+        this.badgeAnimated = true;
+        setTimeout(() => (this.badgeAnimated = false), 1000);
+      }
+    },
   },
   computed: {
-    ...mapGetters(["authError", "user"]),
+    ...mapGetters(["authError", "user", "userLikes"]),
     horizontalNavItems() {
       let items = [
         { icon: "chat", title: "Posts", link: "/posts" },
@@ -237,5 +250,33 @@ export default {
 .fade-leave-active {
   opacity: 0;
   transform: translateX(-25px);
+}
+
+/* User Likes Animation */
+.bounce {
+  animation: bounce 1s both;
+}
+
+@keyframes bounce {
+  0%,
+  20%,
+  53%,
+  80%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  40%,
+  43% {
+    transform: translate3d(0, -20px, 0);
+  }
+
+  70% {
+    transform: translate3d(0, -10px, 0);
+  }
+
+  90% {
+    transform: translate3d(0, -4px, 0);
+  }
 }
 </style>

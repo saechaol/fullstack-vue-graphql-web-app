@@ -46,6 +46,7 @@ type LikesFaves {
 
 type Query {
   getPosts: [Post]
+  getUserPosts(userId: ID!): [Post]
   getPost(postId: ID!): Post!
   getCurrentUser: User
   searchPosts(searchTerm: String): [Post]

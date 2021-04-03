@@ -253,7 +253,7 @@ export default {
         "Are you sure you want to delete this post?"
       );
       if (deletePost) {
-        this.$store.dispatch("deleteUSerPost", {
+        this.$store.dispatch("deleteUserPost", {
           postId: this.postId,
         });
       }

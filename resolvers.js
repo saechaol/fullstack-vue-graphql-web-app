@@ -181,6 +181,18 @@ module.exports = {
       }).save();
       return post;
     },
+    updateUserPost: async (
+      _,
+      { postId, userId, title, imageUrl, categories, description },
+      { Post }
+    ) => {
+      const post = await Post.findOneAndUpdate(
+        { _id: postId, createdBy: userId },
+        { $set: { title, imageUrl, categories, description } },
+        { new: true }
+      );
+      return post;
+    },
     addPostComment: async (_, { commentBody, userId, postId }, { Post }) => {
       const newComment = {
         commentBody,

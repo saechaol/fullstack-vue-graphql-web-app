@@ -64,6 +64,8 @@
 
       <!-- Search Input -->
       <v-text-field
+        v-model="searchTerm"
+        @input="handleSearchPosts"
         flex
         prepend-icon="search"
         placeholder="Search posts"
@@ -71,6 +73,16 @@
         single-line
         hide-details
       ></v-text-field>
+
+      <!-- Search results card -->
+      <v-card dark v-if="searchResults.length" id="search__card">
+        <v-list v-for="result in searchResults" :key="result._id">
+          <v-list-item-title>
+            {{ result.title }}
+            <span class="font-weight-thin">{{ result.description }}</span>
+          </v-list-item-title>
+        </v-list>
+      </v-card>
 
       <v-spacer></v-spacer>
 
@@ -163,6 +175,7 @@ export default {
   name: "App",
   data() {
     return {
+      searchTerm: "",
       sideNav: false,
       authSnackbar: false,
       authErrorSnackbar: false,
@@ -191,7 +204,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(["authError", "user", "userLikes"]),
+    ...mapGetters(["searchResults", "authError", "user", "userLikes"]),
     horizontalNavItems() {
       let items = [
         { icon: "chat", title: "Posts", link: "/posts" },
@@ -225,6 +238,11 @@ export default {
     },
   },
   methods: {
+    handleSearchPosts() {
+      this.$store.dispatch("searchPosts", {
+        searchTerm: this.searchTerm,
+      });
+    },
     handleSignOutUser() {
       this.$store.dispatch("signoutUser");
     },
@@ -252,6 +270,14 @@ export default {
   transform: translateX(-25px);
 }
 
+/* Search Results Card */
+#search__card {
+  position: absolute;
+  width: 100vw;
+  z-index: 8;
+  top: 100%;
+  left: 0%;
+}
 /* User Likes Animation */
 .bounce {
   animation: bounce 1s both;

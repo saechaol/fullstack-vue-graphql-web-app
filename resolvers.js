@@ -34,6 +34,22 @@ module.exports = {
       });
       return user;
     },
+    searchPosts: async (_, { searchTerm }, { Post }) => {
+      if (searchTerm) {
+        const searchResults = await Post.find(
+          // Perform text search for search value of 'searchTerm'
+          { $text: { $search: searchTerm } },
+          // project 'searchTerm' a text score to provide best match
+          { score: { $meta: "textScore" } }
+        )
+          .sort({
+            score: { $meta: "textScore" },
+            likes: "desc",
+          })
+          .limit(5);
+        return searchResults;
+      }
+    },
     infiniteScrollPosts: async (_, { pageNum, pageSize }, { Post }) => {
       let posts;
       if (pageNum === 1) {

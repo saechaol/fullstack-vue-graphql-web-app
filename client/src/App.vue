@@ -76,11 +76,23 @@
 
       <!-- Search results card -->
       <v-card dark v-if="searchResults.length" id="search__card">
-        <v-list v-for="result in searchResults" :key="result._id">
-          <v-list-item-title>
-            {{ result.title }}
-            <span class="font-weight-thin">{{ result.description }}</span>
-          </v-list-item-title>
+        <v-list>
+          <v-list-item
+            v-for="result in searchResults"
+            :key="result._id"
+            @click="goToSearchResult(result._id)"
+          >
+            <v-list-item-title>
+              {{ result.title }} -
+              <span class="font-weight-thin">{{
+                formatDescription(result.description)
+              }}</span>
+            </v-list-item-title>
+            <!-- Show if result has been favorited by the user -->
+            <v-list-item-action v-if="checkIfUserFavorite(result._id)">
+              <v-icon>favorite</v-icon>
+            </v-list-item-action>
+          </v-list-item>
         </v-list>
       </v-card>
 
@@ -245,6 +257,22 @@ export default {
     },
     handleSignOutUser() {
       this.$store.dispatch("signoutUser");
+    },
+    goToSearchResult(resultId) {
+      // clear search term
+      this.searchTerm = "";
+      // go to desired page
+      this.$router.push(`/posts/${resultId}`);
+      // clear search results
+      this.$store.commit("clearSearchResults");
+    },
+    formatDescription(desc) {
+      return desc.length > 30 ? `${desc.slice(0, 30)}...` : desc;
+    },
+    checkIfUserFavorite(resultId) {
+      return (
+        this.userLikes && this.userLikes.some((item) => item._id === resultId)
+      );
     },
     toggleSideNav() {
       this.sideNav = !this.sideNav;

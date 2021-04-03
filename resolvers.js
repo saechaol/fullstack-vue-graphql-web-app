@@ -193,6 +193,10 @@ module.exports = {
       );
       return post;
     },
+    deleteUserPost: async (_, { postId }, { Post }) => {
+      const post = await Post.findOneAndRemove({ _id: postId });
+      return post;
+    },
     addPostComment: async (_, { commentBody, userId, postId }, { Post }) => {
       const newComment = {
         commentBody,

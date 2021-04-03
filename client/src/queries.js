@@ -168,6 +168,14 @@ export const UPDATE_USER_POST = gql`
   }
 `;
 
+export const DELETE_USER_POST = gql`
+  mutation($postId: ID!) {
+    deleteUserPost(postId: $postId) {
+      _id
+    }
+  }
+`;
+
 export const ADD_POST_COMMENT = gql`
   mutation($commentBody: String!, $userId: ID!, $postId: ID!) {
     addPostComment(
